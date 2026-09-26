@@ -95,12 +95,59 @@ async function getUserByID(userID){
     }
 }
 
+async function userExistByUsername(EnterdUsername){
+    try{
+        const sqlCommand = 'SELECT EXISTS (SELECT 1 FROM users WHERE username=$1);';
+        const value = [EnterdUsername];
+
+        const result = await pool.query(sqlCommand,value);
+
+        return result.rows[0].exists; //return boolean result
+
+    }
+    catch(error){
+        throw error
+    }
+}
+
+async function userExistByEmail(EnterdEmail){
+    try{
+        const sqlCommand = 'SELECT EXISTS (SELECT 1 FROM users WHERE email=$1);';
+        const value = [EnterdEmail];
+
+        const result = await pool.query(sqlCommand,value);
+
+        return result.rows[0].exists; //return boolean result
+
+    }
+    catch(error){
+        throw error
+    }
+}
+
+async function userExistByID(userID){
+    try{
+        const sqlCommand = 'SELECT EXISTS (SELECT 1 FROM users WHERE user_id=$1);';
+        const value = [userID];
+
+        const result = await pool.query(sqlCommand,value);
+
+        return result.rows[0].exists; //return boolean result
+
+    }
+    catch(error){
+        throw error
+    }
+}
 
 export default {
     createUser,
     getUserByUsername,
     getUserByEmail,
-    getUserByID
+    getUserByID,
+    userExistByUsername,
+    userExistByEmail,
+    userExistByID
 }
 
 

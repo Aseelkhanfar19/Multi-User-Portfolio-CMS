@@ -48,4 +48,39 @@ async function testGetUserByID(mockData) {
     
 }
 
-testGetUserByID(testData.mockLogin.user_id);
+async function testUserExistByUsername(mockData){
+    try{
+        const result = await dbMethods.userExistByUsername(mockData);
+
+        console.log(result);
+    }
+    catch(error){
+        console.log(error);
+    }
+
+}
+
+async function testUserExistByEmail(mockData){
+    try{
+        const result = await dbMethods.userExistByEmail(mockData);
+
+        console.log(result);
+    }
+    catch(error){
+        console.log(error);
+    }
+
+}
+
+async function testUserExistByID(mockData){
+    try{
+        const result = await dbMethods.userExistByID(mockData);
+
+        console.log(result);
+    }
+    catch(error){
+        console.log(error);
+    }
+
+}
+
