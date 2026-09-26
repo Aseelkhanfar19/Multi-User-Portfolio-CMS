@@ -17,5 +17,4 @@ const mockProject={
 export default {
     mockProject,
     mockUser,
-    mockLogin
-}
+  }
