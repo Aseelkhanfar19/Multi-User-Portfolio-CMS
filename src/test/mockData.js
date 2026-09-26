@@ -7,13 +7,6 @@ const mockUser = {
 };
 
 
-const mockLogin={
-    user_id:"5930223a-576c-45b6-a919-208a3d55305e",
-    username:"testuser00",
-    email:"test@example.com",
-    password_hash:"hashed_password_example"
-}
-
 
 
 const mockProject={
