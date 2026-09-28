@@ -28,6 +28,8 @@ async function register(req,res){
         return res.status(400).json({
             details:"Passwords do not match"
         });
+    
+    //validateStrengthPassword
 
     const hashedPassword = await hashPassword(userData.password);
     //prepare data as object {}
@@ -36,6 +38,8 @@ async function register(req,res){
     //send res -> 201 created 
     
 }
+
+
 
 
 function allDataFilled(userData){
@@ -54,7 +58,9 @@ async function hashPassword(password) {
     return password_hashed;
 }
 
+function validatePasswordStrength(password){
 
+}
 
 export default{
     register
