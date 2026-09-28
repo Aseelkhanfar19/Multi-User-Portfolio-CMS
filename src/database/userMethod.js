@@ -2,6 +2,9 @@
 import pool from "./db.js";
 //METHODS FOR CREATION TOMORROW
 
+
+//This file for use with DB , CRUD 
+
 // create user 
 //get user by id
 //get user by username
@@ -60,6 +63,7 @@ async function getUserByUsername(username){
     }
 }
 
+
 async function getUserByEmail(email){
     try{
         const sqlCommand = `
@@ -95,6 +99,7 @@ async function getUserByID(userID){
     }
 }
 
+
 async function userExistByUsername(EnterdUsername){
     try{
         const sqlCommand = 'SELECT EXISTS (SELECT 1 FROM users WHERE username=$1);';
@@ -110,6 +115,7 @@ async function userExistByUsername(EnterdUsername){
     }
 }
 
+
 async function userExistByEmail(EnterdEmail){
     try{
         const sqlCommand = 'SELECT EXISTS (SELECT 1 FROM users WHERE email=$1);';
@@ -124,6 +130,7 @@ async function userExistByEmail(EnterdEmail){
         throw error
     }
 }
+
 
 async function userExistByID(userID){
     try{
