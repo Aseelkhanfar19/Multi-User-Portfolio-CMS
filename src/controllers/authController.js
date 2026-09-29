@@ -3,54 +3,62 @@ import userDB from "../database/userMethod.js";
 import argon2 from "argon2";
 async function register(req,res){
 
-    const userData = req.body;
-    const isDataFilled = allDataFilled(userData);
-    if(!isDataFilled){
-        return res.status(400).json({
-            details:"Please Fill All Fields"
-        });
-    }
-    const isUsernameExist = await userDB.userExistByUsername(userData.username);
-    const isEmailExist = await userDB.userExistByEmail(userData.email);
+    try{
 
-    if (isUsernameExist)
-        return res.status(409).json({
-            details:"Username is exist"
-        });
+        const userData = req.body;
+        const isDataFilled = allDataFilled(userData);
+        if(!isDataFilled){
+            return res.status(400).json({
+                details:"Please Fill All Fields"
+            });
+        }
+        const isUsernameExist = await userDB.userExistByUsername(userData.username);
+        const isEmailExist = await userDB.userExistByEmail(userData.email);
 
-    if(isEmailExist)
-        return res.status(409).json({
-            details:"Email is exist"
-        });
+        if (isUsernameExist)
+            return res.status(409).json({
+                details:"Username is exist"
+            });
 
-    
-    if(userData.password !== userData.conPassword)
-        return res.status(400).json({
-            details:"Passwords do not match"
+        if(isEmailExist)
+            return res.status(409).json({
+                details:"Email is exist"
+            });
+
+        
+        if(userData.password !== userData.conPassword)
+            return res.status(400).json({
+                details:"Passwords do not match"
+            });
+        
+        const validPassword = validatePasswordStrength(userData.password);
+        if(!validPassword)return res.status(400).json({
+            details:"Invalid Password"
         });
-    
-    const validPassword = validatePasswordStrength(userData.password);
-    if(!validPassword)return res.status(400).json({
-        details:"Invalid Password"
+        
+
+        const hashedPassword = await hashPassword(userData.password);
+
+        const formattedData = {
+            username : userData.username,
+            email: userData.email,
+            first_name:userData.first_name,
+            last_name:userData.last_name,
+            password_hash:hashedPassword
+        };
+
+        //send it to DB 
+        const registrationResult = await userDB.createUser(formattedData);
+
+        return res.status(201).json({
+            newData:registrationResult
+        });
+  }
+  catch(error){
+    return res.status(500).json({
+        details:`Internal error , ${error.message}.`
     });
-    
-
-    const hashedPassword = await hashPassword(userData.password);
-
-    const formattedData = {
-        username : userData.username,
-        email: userData.email,
-        first_name:userData.first_name,
-        last_name:userData.last_name,
-        password_hash:hashedPassword
-    };
-
-    //send it to DB 
-    const registrationResult = await userDB.createUser(formattedData);
-
-    return res.status(201).json({
-        newData:registrationResult
-    });
+  }
 }
 
 
