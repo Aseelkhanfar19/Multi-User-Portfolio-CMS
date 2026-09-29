@@ -29,14 +29,28 @@ async function register(req,res){
             details:"Passwords do not match"
         });
     
-    //validateStrengthPassword
+    const validPassword = validatePasswordStrength(userData.password);
+    if(!validPassword)return res.status(400).json({
+        details:"Invalid Password"
+    });
+    
 
     const hashedPassword = await hashPassword(userData.password);
-    //prepare data as object {}
+
+    const formattedData = {
+        username : userData.username,
+        email: userData.email,
+        first_name:userData.first_name,
+        last_name:userData.last_name,
+        password_hash:hashedPassword
+    };
+
     //send it to DB 
-    //get result of successfully registration 
-    //send res -> 201 created 
-    
+    const registrationResult = await userDB.createUser(formattedData);
+
+    return res.status(201).json({
+        newData:registrationResult
+    });
 }
 
 
@@ -59,9 +73,22 @@ async function hashPassword(password) {
 }
 
 function validatePasswordStrength(password){
+    /*
+    (?=.{12,}$) => length 12 or more
+    (?=.*[A-Z])(?=.*[a-z]) => has at least uppercase character and lowercase character
+    (?=.*\d) => has at least one digit
+    (?=.*[!@#$%^&*]) => at least one special character
+    (?!.*\s) => has no whitespace
+    */
+    const validFormat = /^(?=.{12,}$)(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])(?!.*\s).*$/;
+
+    return validFormat.test(password);
 
 }
 
 export default{
-    register
+    register,
+    validatePasswordStrength,
+    allDataFilled,
+    hashPassword
 }

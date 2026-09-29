@@ -26,7 +26,7 @@ async function createUser(userData){ //should recieve {key:value,key:value....}
         password_hash
         )
         VALUES($1,$2,$3,$4,$5)
-        RETURNING user_id,email,username,first_name,last_name;
+        RETURNING user_id,username,email,first_name,last_name;
         `
 
         const values = [
