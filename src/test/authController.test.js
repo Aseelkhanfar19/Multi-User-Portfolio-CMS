@@ -240,7 +240,16 @@ test("Registration succeed",async()=>{
 // Login Unit Test 
 //========================================
 
-test
+test("Create Token",()=>{
+    const user = {
+        user_id:"0110d4fe-0629-4bf5-a763-0b800dd361a5"
+    };
+
+    const token = authCont.createToken(user);
+    expect(token).not.toEqual(user.user_id);
+
+});
+
 
 
 
