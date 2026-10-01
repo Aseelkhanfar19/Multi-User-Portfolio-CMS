@@ -1,32 +1,37 @@
-# React + TypeScript + Vite
+# 👥 Multi-User-Portfolio-CMS
+## 📄 Overview
+A full-stack portfolio management system designed to allow multiple users to create, manage, and showcase their professional portfolios through a public portfolio website and a private admin dashboard.
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Each user has their own portfolio data, including projects, skills, education, work experience, links, and profile information. The system separates public portfolio content from administrative functionality, allowing users to manage their information without exposing the management interface.
 
-Currently, two official plugins are available:
+I'm building this project from the backend and database up, focusing on understanding the architecture, data flow, authentication, authorization, API design, and how the different parts of a full-stack application communicate with each other.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Technologies
 
-## React Compiler
+### 🖼️ Frontend
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* React
+* TypeScript
+* Tailwind CSS
 
-## Expanding the Oxlint configuration
+### ⚙️ Backend
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+* Node.js
+* Express.js
+* REST APIs
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+### 🗄️ Database
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+* PostgreSQL
+* Supabase
+
+### 🔐 Authentication & Security
+
+* Argon2
+* JWT
+
+### 💻 Development Tools
+
+* Git
+* GitHub
+* VS Code
