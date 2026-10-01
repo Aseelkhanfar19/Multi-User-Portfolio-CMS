@@ -25,6 +25,11 @@ async function register(req,res){
                 details:"Email is exist"
             });
 
+        const validEmail = validEmailFormat(userData.email);
+        if(!validEmail) return res.status(400).json({
+            details:"Email is not valid"
+        });
+
         
         if(userData.password !== userData.conPassword)
             return res.status(400).json({
@@ -94,9 +99,15 @@ function validatePasswordStrength(password){
 
 }
 
+function validEmailFormat(email){
+    const validFormat = /^[^@\s]+@[^@\s]+\.[^@\s]+$/; // [^@\s] => everything except whitespace and @ character
+    return validFormat.test(email);
+}
+
 export default{
     register,
     validatePasswordStrength,
     allDataFilled,
-    hashPassword
+    hashPassword,
+    validEmailFormat
 }

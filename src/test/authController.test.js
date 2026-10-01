@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, expect , vi } from "vitest";
 import authCont from "../controllers/authController.js";
 
 test("Accept valid password",()=>{
@@ -122,4 +122,120 @@ test("Cannot hash non-string",async()=>{
         authCont.hashPassword(password)
     ).rejects.toThrow();
 });
+
+
+//================================================
+// Email Format Test
+//================================================
+
+test("Email is valid",()=>{
+    expect(authCont.validEmailFormat("aseel454@gmail.com")).toBe(true);
+});
+
+test("Email without @ ",()=>{
+    expect(authCont.validEmailFormat("aseel454gmail.com")).toBe(false);
+});
+
+test("Email without any character before @ ",()=>{
+    expect(authCont.validEmailFormat("@gmail.com")).toBe(false);
+});
+
+test("Email without any character after @ ",()=>{
+    expect(authCont.validEmailFormat("uyit@.com")).toBe(false);
+});
+
+test("Email without domain extension -> .something ",()=>{
+    expect(authCont.validEmailFormat("aseel.a.kh@gmail")).toBe(false);
+});
+test("Email ended with something except .com",()=>{
+    expect(authCont.validEmailFormat("aseel.a.kh@gmail.ot")).toBe(true);
+});
+test("Empty Value",()=>{
+    expect(authCont.validEmailFormat("")).toBe(false);
+});
+test("Email with .bau.edu",()=>{
+    expect(authCont.validEmailFormat("aseel.akh@bau.edu")).toBe(true);
+});
+test("Email with whitespaces in middle",()=>{
+    expect(authCont.validEmailFormat("aseel. akh@bau.edu")).toBe(false);
+});
+test("Email with whitespaces at the end",()=>{
+    expect(authCont.validEmailFormat("aseel.akh@bau.edu ")).toBe(false);
+});
+test("Email with whitespaces at the begining",()=>{
+    expect(authCont.validEmailFormat(" aseel.akh@bau.edu")).toBe(false);
+});
+
+//========================================
+// Register Unit Test 
+//========================================
+
+function createMockRequest(body){
+
+    return {
+        body
+    };
+
+}
+
+function createMockResponse(){
+
+    return {
+        statusCode: null,
+        data: null,
+
+        status(code) {
+            this.statusCode = code;
+            return this;
+        },
+
+        json(data) {
+            this.data = data;
+            return this;
+        }
+    };
+
+}
+
+
+test("Registration fails when any field is empty",async()=>{
+    const req =createMockRequest({
+            username:"aseelkh012",
+            email:"aseel@02fjgig.com",
+            first_name: "ASEEL",
+            last_name: "",
+            password: "Aseel@123456",
+            conPassword: "Aseel@123456"            
+    });
+    const res = createMockResponse();
+
+    await authCont.register(req,res);
+    expect(res.statusCode).toBe(400);
+    expect(res.data).toEqual({
+        details: "Please Fill All Fields"
+    });
+});
+
+
+test("Registration succeed",async()=>{
+    const req = createMockRequest({
+            username:"aseeloyyto0",
+            email:"aseel@gotlttsjjf.def.fi",
+            first_name: "ASEEL",
+            last_name: "KHANFER",
+            password: "Aseel@123456",
+            conPassword: "Aseel@123456"          
+    });
+
+    const res = createMockResponse();
+
+    await authCont.register(req,res);
+
+    expect(res.statusCode).toBe(201);
+    expect(res.data).toEqual(res.data);
+});
+
+
+
+
 
