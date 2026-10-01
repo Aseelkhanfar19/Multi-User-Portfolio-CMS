@@ -1,4 +1,4 @@
-# 👥 Multi-User-Portfolio-CMS
+# 👥 Multi User Portfolio CMS
 ## 📄 Overview
 A full-stack portfolio management system designed to allow multiple users to create, manage, and showcase their professional portfolios through a public portfolio website and a private admin dashboard.
 
