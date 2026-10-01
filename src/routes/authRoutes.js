@@ -7,6 +7,8 @@ const router = Router();
 
 router.post("/register",auth.register);
 
+router.post("/login",auth.login);
+
 
 
 //Will used in server file to reach the endpoints here

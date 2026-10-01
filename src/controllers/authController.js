@@ -1,4 +1,5 @@
 // This File contain the logic of authentication and will contact with DB by userMethods
+import { userInfo } from "node:os";
 import userDB from "../database/userMethod.js";
 import argon2 from "argon2";
 async function register(req,res){
@@ -67,8 +68,6 @@ async function register(req,res){
 }
 
 
-
-
 function allDataFilled(userData){
     if(Object.keys(userData).length<=0)return false;
     for(let value of Object.values(userData)){
@@ -104,8 +103,64 @@ function validEmailFormat(email){
     return validFormat.test(email);
 }
 
+
+//===========================================
+// Login Process
+//===========================================
+async function login(req,res){
+    let user;
+    // check if all fields filled
+    const userData = req.body;
+    if (!allDataFilled(userData)){
+        return res.status(400).json({
+            details:"Please Fill All Fields"
+        });
+    }
+    //check if the user exist by username or email
+    //check if the password is correct
+    //return the user data with token
+
+    //Check is user login by email or username
+    const emailFormat = validEmailFormat(userData.identifier);
+    if(emailFormat){
+        //login by email
+         user = await userDB.getUserByEmail(userData.identifier);
+        
+    }
+    else{
+        //login by username
+        user = await userDB.getUserByUsername(userData.identifier);
+    }
+    if(!user){
+        return res.status(404).json({
+            details:"Invalid username/email or password"
+        });
+    }
+
+    const isPasswordCorrect = await argon2.verify(user.password_hash,userData.password);
+    if(!isPasswordCorrect){
+        return res.status(404).json({
+            details:"Invalid username/email or password"
+        });
+    }
+
+    return res.status(200).json({
+        details:"Login Successful",
+        userData:{
+            user_id:user.user_id,
+            username:user.username,
+            email:user.email,
+            first_name:user.first_name,
+            last_name:user.last_name
+        }
+    });
+
+}
+
+
 export default{
     register,
+    login,
     validatePasswordStrength,
     allDataFilled,
     hashPassword,
