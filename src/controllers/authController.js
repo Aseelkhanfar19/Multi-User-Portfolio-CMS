@@ -2,6 +2,9 @@
 import { userInfo } from "node:os";
 import userDB from "../database/userMethod.js";
 import argon2 from "argon2";
+import jwt from "jsonwebtoken";
+
+
 async function register(req,res){
 
     try{
@@ -144,6 +147,9 @@ async function login(req,res){
         });
     }
 
+    //create a token for the user and send it back to the client
+    const token = createToken(user);
+
     return res.status(200).json({
         details:"Login Successful",
         userData:{
@@ -152,11 +158,28 @@ async function login(req,res){
             email:user.email,
             first_name:user.first_name,
             last_name:user.last_name
-        }
+        },
+        token:token
     });
 
 }
 
+
+function createToken(user){
+
+    const payload = {
+        user_id:user.user_id
+    };
+    const secretKey = process.env.JWT_SECRET;
+    const options = {
+        expiresIn:"1h"
+    };
+    const token = jwt.sign(payload,secretKey,options);
+
+    return token;
+
+
+}
 
 export default{
     register,
