@@ -8,7 +8,7 @@ I'm building this project from the backend and database up, focusing on understa
 
 ## 🛠️ Technologies
 
-### 🖼️ Frontend
+### 🎨 Frontend
 
 * React
 * TypeScript
