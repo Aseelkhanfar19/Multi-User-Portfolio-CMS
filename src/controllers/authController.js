@@ -21,22 +21,28 @@ async function register(req,res){
             });
         }
         const isUsernameExist = await userDB.userExistByUsername(userData.username);
-        const isEmailExist = await userDB.userExistByEmail(userData.email);
+
 
         if (isUsernameExist)
             return res.status(409).json({
                 details:"Username is exist"
             });
 
+
+        const validEmail = validEmailFormat(userData.email);
+        const isEmailExist = await userDB.userExistByEmail(userData.email);
+
+        
+        if(!validEmail) return res.status(400).json({
+            details:"Email is not valid"
+        });
+
         if(isEmailExist)
             return res.status(409).json({
                 details:"Email is exist"
             });
 
-        const validEmail = validEmailFormat(userData.email);
-        if(!validEmail) return res.status(400).json({
-            details:"Email is not valid"
-        });
+
 
         
         if(userData.password !== userData.conPassword)

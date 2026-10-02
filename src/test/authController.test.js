@@ -166,6 +166,32 @@ test("Email with whitespaces at the begining",()=>{
     expect(authCont.validEmailFormat(" aseel.akh@bau.edu")).toBe(false);
 });
 
+
+//========================================
+// Create Mock functions for testing register method
+//========================================
+
+// Mocking the userDB methods to avoid actual database calls during testing
+vi.mock("../database/userMethod.js",()=>{
+    return {
+        // Control the behavior of the mocked methods as needed for your tests
+        // Return mock values or promises to simulate different scenarios instead of actual database calls
+        default: {
+        userExistByUsername: vi.fn().mockResolvedValue(false),
+        userExistByEmail:vi.fn().mockResolvedValue(false),
+        createUser: vi.fn().mockResolvedValue({
+            
+            user_id:"fake_id",
+            username:"fake_username",
+            email:"fake_email",
+            first_name:"fake_first_name",
+            last_name:"fake_last_name"
+
+        })//end of createUser
+    }//end of default
+}; //end of return
+});
+
 //========================================
 // Register Unit Test 
 //========================================
