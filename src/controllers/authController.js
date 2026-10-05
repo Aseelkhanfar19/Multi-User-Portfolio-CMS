@@ -1,5 +1,4 @@
 // This File contain the logic of authentication and will contact with DB by userMethods
-import { userInfo } from "node:os";
 import userDB from "../database/userMethod.js";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";

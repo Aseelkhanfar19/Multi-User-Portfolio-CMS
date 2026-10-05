@@ -1,5 +1,7 @@
 import { describe, test, expect , vi } from "vitest";
 import authCont from "../controllers/authController.js";
+import userDB from "../database/userMethod.js";
+import "dotenv/config";
 
 test("Accept valid password",()=>{
     expect(authCont.validatePasswordStrength("AseeL@123#67aas")).toBe(true);
@@ -168,6 +170,21 @@ test("Email with whitespaces at the begining",()=>{
 
 
 //========================================
+// Login Unit Test 
+//========================================
+
+test("Create Token",()=>{
+    const user = {
+        user_id:"0110d4fe-0629-4bf5-a763-0b800dd361a5"
+    };
+
+    const token = authCont.createToken(user);
+    expect(token).not.toEqual(user.user_id);
+
+});
+
+
+//========================================
 // Create Mock functions for testing register method
 //========================================
 
@@ -177,17 +194,9 @@ vi.mock("../database/userMethod.js",()=>{
         // Control the behavior of the mocked methods as needed for your tests
         // Return mock values or promises to simulate different scenarios instead of actual database calls
         default: {
-        userExistByUsername: vi.fn().mockResolvedValue(false),
-        userExistByEmail:vi.fn().mockResolvedValue(false),
-        createUser: vi.fn().mockResolvedValue({
-            
-            user_id:"fake_id",
-            username:"fake_username",
-            email:"fake_email",
-            first_name:"fake_first_name",
-            last_name:"fake_last_name"
-
-        })//end of createUser
+        userExistByUsername: vi.fn(),
+        userExistByEmail:vi.fn(),
+        createUser: vi.fn()//end of createUser
     }//end of default
 }; //end of return
 });
@@ -233,6 +242,7 @@ test("Registration fails when any field is empty",async()=>{
             password: "Aseel@123456",
             conPassword: "Aseel@123456"            
     });
+    
     const res = createMockResponse();
 
     await authCont.register(req,res);
@@ -245,12 +255,25 @@ test("Registration fails when any field is empty",async()=>{
 
 test("Registration succeed",async()=>{
     const req = createMockRequest({
-            username:"aseeloyyto0",
-            email:"aseel@gotlttsjjf.def.fi",
-            first_name: "ASEEL",
-            last_name: "KHANFER",
+        //data should user send in request body
+            username:"fake_username",
+            email:"fake_email@fake.com",
+            first_name:"fake_first_name",
+            last_name:"fake_last_name",
             password: "Aseel@123456",
-            conPassword: "Aseel@123456"          
+            conPassword: "Aseel@123456"  
+
+    });
+
+    userDB.userExistByUsername.mockResolvedValue(false);
+    userDB.userExistByEmail.mockResolvedValue(false);
+    userDB.createUser.mockResolvedValue({
+        //what the createUser method will return after inserting data into DB
+        user_id: "fake_id",
+        username: "fake_username",
+        email: "fake_email@fake.com",
+        first_name: "fake_first_name",
+        last_name: "fake_last_name"
     });
 
     const res = createMockResponse();
@@ -258,23 +281,110 @@ test("Registration succeed",async()=>{
     await authCont.register(req,res);
 
     expect(res.statusCode).toBe(201);
-    expect(res.data).toEqual(res.data);
+    expect(res.data).toEqual({
+        // Rigestration method will return ' newData' object with user data => newData :{....} , so the result should equal this
+        newData:{
+        user_id:"fake_id",
+        username:"fake_username",
+        email:"fake_email@fake.com",
+        first_name:"fake_first_name",
+        last_name:"fake_last_name"
+    }
+
+    });
+});
+
+test("Registration fails when username already exists",async()=>{
+    const req = createMockRequest({
+        username:"existing_username",
+        email:"aseel@gg.com",
+        first_name:"ASEEL",
+        last_name:"KHANFER",
+        password:"Aseel@123456",
+        conPassword:"Aseel@123456"
+    });
+    const res = createMockResponse();
+
+    userDB.userExistByUsername.mockResolvedValue(true);
+    userDB.userExistByEmail.mockResolvedValue(false);
+
+    await authCont.register(req,res);
+    expect(res.statusCode).toBe(409); //409 code for conflict
+    expect(res.data).toEqual({
+        details:"Username is exist"
+    });
+});
+
+test("Registration fails when email already exists",async()=>{
+    const req = createMockRequest({
+        username:"username123",
+        email:"aseel@gg.com", //consider this email is exist in DB
+        first_name:"ASEEL",
+        last_name:"KHANFER",
+        password:"Aseel@123456",
+        conPassword:"Aseel@123456"
+    });
+    const res = createMockResponse();
+
+    userDB.userExistByEmail.mockResolvedValue(true);
+    userDB.userExistByUsername.mockResolvedValue(false);
+
+    await authCont.register(req,res);
+    expect(res.statusCode).toBe(409); //409 code for conflict
+    expect(res.data).toEqual({
+        details:"Email is exist"
+    });
 });
 
 
-//========================================
-// Login Unit Test 
-//========================================
+test("Registration fails when username and email both already exist",async()=>{
+        const req = createMockRequest({
+        username:"username123",
+        email:"aseel@gg.com", //consider this email is exist in DB
+        first_name:"ASEEL",
+        last_name:"KHANFER",
+        password:"Aseel@123456",
+        conPassword:"Aseel@123456"
+        });
+        const res = createMockResponse();
 
-test("Create Token",()=>{
-    const user = {
-        user_id:"0110d4fe-0629-4bf5-a763-0b800dd361a5"
-    };
+        userDB.userExistByUsername.mockResolvedValue(true);
+        userDB.userExistByEmail.mockResolvedValue(true);
 
-    const token = authCont.createToken(user);
-    expect(token).not.toEqual(user.user_id);
+        await authCont.register(req,res);
+
+        expect(res.statusCode).toBe(409); //409 code for conflict
+        expect(res.data).toEqual({
+            details:"Username is exist"
+        });
 
 });
+
+test("Registration fails when passwords do not match",async()=>{
+        const req = createMockRequest({
+        username:"username123",
+        email:"aseel@gg.com", //consider this email is exist in DB
+        first_name:"ASEEL",
+        last_name:"KHANFER",
+        password:"Aseel@123456",
+        conPassword:"Aseel@12345677"
+        });
+        const res = createMockResponse();
+
+        userDB.userExistByUsername.mockResolvedValue(false);
+        userDB.userExistByEmail.mockResolvedValue(false);
+
+        await authCont.register(req,res);
+        expect(res.statusCode).toBe(400);
+        expect(res.data).toEqual({
+            details:"Passwords do not match"
+        });
+
+});
+
+
+
+
 
 
 
