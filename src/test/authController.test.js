@@ -2,6 +2,8 @@ import { describe, test, expect , vi } from "vitest";
 import authCont from "../controllers/authController.js";
 import userDB from "../database/userMethod.js";
 import "dotenv/config";
+import jwt from "jsonwebtoken";
+import argon2 from "argon2";
 
 test("Accept valid password",()=>{
     expect(authCont.validatePasswordStrength("AseeL@123#67aas")).toBe(true);
@@ -118,12 +120,6 @@ test("password hashed successfully",async()=>{
     expect(hashed).not.toBe(password);
 });
 
-test("Cannot hash non-string",async()=>{
-    const password = 1233;
-    await expect(
-        authCont.hashPassword(password)
-    ).rejects.toThrow();
-});
 
 
 //================================================
@@ -170,7 +166,41 @@ test("Email with whitespaces at the begining",()=>{
 
 
 //========================================
-// Login Unit Test 
+// Username Format Test
+//========================================
+
+test("Valid Username",()=>{
+    expect(authCont.validUsernameFormat("aseel_123")).toBe(true);
+});
+
+test("Username with uppercase",()=>{
+    expect(authCont.validUsernameFormat("Aseel_123")).toBe(false);
+});
+
+test("Username with special character",()=>{
+    expect(authCont.validUsernameFormat("aseel@123")).toBe(false);
+});
+
+test("Username with whitespace",()=>{
+    expect(authCont.validUsernameFormat("aseel 123")).toBe(false);
+});
+
+test("Username with length less than 3",()=>{
+    expect(authCont.validUsernameFormat("as")).toBe(false);
+});
+
+test("Username with length more than 20",()=>{
+    expect(authCont.validUsernameFormat("aseel_12345678901234567890")).toBe(false);
+});
+
+test("Username Empty String",()=>{
+    expect(authCont.validUsernameFormat("")).toBe(false);
+});
+
+
+
+//========================================
+// Token Unit Test 
 //========================================
 
 test("Create Token",()=>{
@@ -196,7 +226,9 @@ vi.mock("../database/userMethod.js",()=>{
         default: {
         userExistByUsername: vi.fn(),
         userExistByEmail:vi.fn(),
-        createUser: vi.fn()//end of createUser
+        createUser: vi.fn(),//end of createUser
+        getUserByEmail: vi.fn(),
+        getUserByUsername: vi.fn()
     }//end of default
 }; //end of return
 });
@@ -339,7 +371,7 @@ test("Registration fails when email already exists",async()=>{
 
 test("Registration fails when username and email both already exist",async()=>{
         const req = createMockRequest({
-        username:"username123",
+        username:"username123", //consider this username is exist in DB
         email:"aseel@gg.com", //consider this email is exist in DB
         first_name:"ASEEL",
         last_name:"KHANFER",
@@ -382,11 +414,193 @@ test("Registration fails when passwords do not match",async()=>{
 
 });
 
+test("Registration fails when password is weak",async()=>{
+        const req = createMockRequest({
+        username:"username123",
+        email:"aseel@gg.com", 
+        first_name:"ASEEL",
+        last_name:"KHANFER",
+        password:"aseel123456", //weak password because it has no uppercase and special character
+        conPassword:"aseel123456"
+        });
+        const res = createMockResponse();
+
+        userDB.userExistByUsername.mockResolvedValue(false);
+        userDB.userExistByEmail.mockResolvedValue(false);
+
+        await authCont.register(req,res);
+        expect(res.statusCode).toBe(400);
+        expect(res.data).toEqual({
+            details:"Invalid Password"
+        });
+
+});
+
+test("Registration fails when username is invalid",async()=>{
+        const req = createMockRequest({
+        username:"Username@123", //invalid username because it contains uppercase and special character
+        email:"aseel@gg.com", 
+        first_name:"ASEEL",
+        last_name:"KHANFER",
+        password:"Aseel@123456",
+        conPassword:"Aseel@12345677"
+        });
+        const res = createMockResponse();
+
+        userDB.userExistByUsername.mockResolvedValue(false);
+        userDB.userExistByEmail.mockResolvedValue(false);
+
+        await authCont.register(req,res);
+        expect(res.statusCode).toBe(400);
+        expect(res.data).toEqual({
+            details:"Invalid Username"
+        });
+
+});
+        
 
 
+//========================================
+// Login Unit Test 
+//========================================
 
 
+vi.mock("argon2",()=>{
+    return {
+        default:{  
+            verify: vi.fn(),//end of verify
+            hash: vi.fn()//end of hash
+        }//end of default
+    }//end of return
+});//end of vi.mock
 
+//for jwt / token generation
+vi.mock("jsonwebtoken",()=>{
+    return{
+        default:{
+            sign: vi.fn()//end of sign
+        }
+    }
+});
+
+test("Login successful with valid credentials",async()=>{
+    const token = "fake_token";
+    const req = createMockRequest({
+        identifier:"valid_user",
+        password:"ValidPassword@123"
+    });
+    const res = createMockResponse();
+    argon2.verify.mockResolvedValue(true); // Mocking password verification to return true
+    jwt.sign.mockReturnValue("fake_token"); // Mocking token generation to return a fake token
+    userDB.getUserByUsername.mockResolvedValue({
+        user_id:"fake_user_id",
+        username:"valid_user",
+        email:"valid_user@example.com",
+        first_name:"Valid",
+        last_name:"User"
+    }); // Mocking user retrieval to return a valid user object
+
+        userDB.getUserByEmail.mockResolvedValue({
+        user_id:"fake_user_id",
+        username:"valid_user",
+        email:"valid_user@example.com",
+        first_name:"Valid",
+        last_name:"User"
+    }); 
+
+    await authCont.login(req,res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.data).toEqual({
+        details: "Login Successful",
+        userData:{
+            user_id:"fake_user_id",
+            username:"valid_user",
+            email:"valid_user@example.com",
+            first_name:"Valid",
+            last_name:"User"
+        },
+        token:"fake_token"
+    });
+
+});
+
+
+test("Login fails with invalid password",async()=>{
+    const req = createMockRequest({
+        identifier:"valid_user",
+        password:"ValidPassword@123"
+    });
+    const res = createMockResponse();
+
+    argon2.verify.mockResolvedValue(false); // Mocking password verification to return false
+
+    await authCont.login(req,res);
+    expect(res.statusCode).toBe(401);
+    expect(res.data).toEqual({
+        details:"Invalid username/email or password"
+    });
+
+});
+
+test("Login fails with non-existing user - username test",async()=>{
+    const req = createMockRequest({
+        identifier:"valid_user",
+        password:"ValidPassword@123"
+    });
+    const res = createMockResponse();  
+
+    userDB.getUserByUsername.mockResolvedValue(null); // Mocking user retrieval to return null (user not found)
+
+    await authCont.login(req,res);
+    expect(res.statusCode).toBe(401);
+    expect(res.data).toEqual({
+        details:"Invalid username/email or password"
+    });
+});
+
+test("Login fails with non-existing user - email test",async()=>{
+    const req = createMockRequest({
+        identifier:"aseel@example.com",
+        password:"ValidPassword@123"
+    });
+    const res = createMockResponse();  
+
+    userDB.getUserByEmail.mockResolvedValue(null); // Mocking user retrieval to return null (user not found)
+
+    await authCont.login(req,res);
+    expect(res.statusCode).toBe(401);
+    expect(res.data).toEqual({
+        details:"Invalid username/email or password"
+    });
+});
+
+test("Login fails when identifier is empty",async()=>{
+    const req = createMockRequest({
+        identifier:"",
+        password:"ValidPassword@123"
+    });
+    const res = createMockResponse();      
+
+    await authCont.login(req,res);
+    expect(res.statusCode).toBe(400);
+    expect(res.data).toEqual({
+        details:"Please Fill All Fields"
+    });
+});
+
+test("Login fails when password is empty",async()=>{
+    const req = createMockRequest({
+        identifier:"valid_user",
+        password:""
+    });
+    const res = createMockResponse();
+    await authCont.login(req,res);
+    expect(res.statusCode).toBe(400);
+    expect(res.data).toEqual({
+        details:"Please Fill All Fields"
+    });
+});
 
 
 

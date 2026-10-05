@@ -19,8 +19,12 @@ async function register(req,res){
                 details:"Please Fill All Fields"
             });
         }
-        const isUsernameExist = await userDB.userExistByUsername(userData.username);
+        const validUsername = validUsernameFormat(userData.username);
+        if(!validUsername) return res.status(400).json({
+            details:"Invalid Username"
+        });
 
+        const isUsernameExist = await userDB.userExistByUsername(userData.username);
 
         if (isUsernameExist)
             return res.status(409).json({
@@ -79,7 +83,6 @@ async function register(req,res){
   }
 }
 
-
 function allDataFilled(userData){
     if(Object.keys(userData).length<=0)return false;
     for(let value of Object.values(userData)){
@@ -115,6 +118,11 @@ function validEmailFormat(email){
     return validFormat.test(email);
 }
 
+function validUsernameFormat(username){
+    const validFormat = /^[a-z0-9_.-]{3,20}$/;
+    return validFormat.test(username);
+}
+
 
 //===========================================
 // Login Process
@@ -135,21 +143,20 @@ async function login(req,res){
         if(emailFormat){
             //login by email
             user = await userDB.getUserByEmail(userData.identifier);
-            
         }
         else{
             //login by username
             user = await userDB.getUserByUsername(userData.identifier);
         }
         if(!user){
-            return res.status(404).json({
+            return res.status(401).json({
                 details:"Invalid username/email or password"
             });
         }
 
         const isPasswordCorrect = await argon2.verify(user.password_hash,userData.password);
         if(!isPasswordCorrect){
-            return res.status(404).json({
+            return res.status(401).json({
                 details:"Invalid username/email or password"
             });
         }
@@ -191,7 +198,6 @@ function createToken(user){
 
     return token;
 
-
 }
 
 export default{
@@ -201,5 +207,6 @@ export default{
     allDataFilled,
     hashPassword,
     validEmailFormat,
-    createToken
+    createToken,
+    validUsernameFormat
 }
