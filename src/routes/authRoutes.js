@@ -5,6 +5,8 @@ import auth from "../controllers/authController.js";
 
 const router = Router();
 
+// will put the middleware here , either by app.use(middleware ) or by add it to each enpoint in the routes
+
 router.post("/register",auth.register);
 
 router.post("/login",auth.login);

@@ -147,7 +147,27 @@ async function userExistByID(userID){
     }
 }
 
+async function updateUserInfo(fields,values,userID){ //fields and values should be arrays
+    try{
+        
+        const prepareUpdatesAttributes = fields.map((field,index)=>{
+            return `${field} = $${index+1}`; //this will be stored in prepareUpdatesAttributes
+        });
 
+        const sqlFields = prepareUpdatesAttributes.join(", ");
+        const newValues = [...values,userID]//will get [value1,value2,userID] , this called spreading/unpacking
+        const sqlCommand = `UPDATE users SET ${sqlFields} WHERE user_id=$${newValues.length}`;
+
+        const result = await pool.query(sqlCommand,newValues);
+
+        return result.rowCount;
+        
+
+    }
+    catch(error){
+        throw error
+    }
+}
 
 export default {
     createUser,
