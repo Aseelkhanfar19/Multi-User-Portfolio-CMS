@@ -149,7 +149,7 @@ async function userExistByID(userID){
 
 async function updateUserInfo(fields,values,userID){ //fields and values should be arrays
     try{
-        
+
         const prepareUpdatesAttributes = fields.map((field,index)=>{
             return `${field} = $${index+1}`; //this will be stored in prepareUpdatesAttributes
         });
@@ -168,6 +168,17 @@ async function updateUserInfo(fields,values,userID){ //fields and values should 
         throw error
     }
 }
+
+
+async function deleteUser(userID) {
+
+    
+}
+
+async function changePassword(newPassword) {
+    
+}
+
 
 export default {
     createUser,
