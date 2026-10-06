@@ -35,3 +35,12 @@ I'm building this project from the backend and database up, focusing on understa
 * Git
 * GitHub
 * VS Code
+
+# ⚙️ Backend Structure
+## Database Structure
+![database schema](url)
+The database is currently structured around multiple related tables to support independent portfolio data for each user.
+### Tables    
+We have 10 tables for the project to store data , The database designed by ``PostgreSQL`` and ``Supabase``.
+#### users Table
+
