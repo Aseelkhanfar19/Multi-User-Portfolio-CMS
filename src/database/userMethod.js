@@ -171,11 +171,33 @@ async function updateUserInfo(fields,values,userID){ //fields and values should 
 
 
 async function deleteUser(userID) {
+    try{
+
+        const sqlCommand="DELETE FROM users where user_id=$1";
+        const result = await pool.query(sqlCommand,[userID]);
+        return result.rowCount; // how many rows effected
+
+    }catch(error){
+        throw error;
+    }
+
+
 
     
 }
 
-async function changePassword(newPassword) {
+async function changePassword(userID,newHashedPassword) {
+    try{
+        const sqlCommand="UPDATE users SET password_hash=$1 WHERE user_id=$2";
+
+        const result = await pool.query(sqlCommand,[newHashedPassword,userID]);//where the newPassword should be hashed
+
+        return result.rowCount;
+
+    }catch(error){
+        throw error;
+    }
+
     
 }
 
