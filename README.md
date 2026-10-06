@@ -42,8 +42,9 @@ I'm building this project from the backend and database up, focusing on understa
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
 
 # ⚙️ Backend Structure
+<br>
 
-## Database Architecture
+## 🗄️ Database Architecture
 ![database schema](Images/supabase-schema-fpstvntbddfwofucujra%20(1).png)     
 
 The database is built on **PostgreSQL** (hosted via **Supabase**). It is designed to host multi-tenant portfolio data with full isolation between users.
@@ -197,10 +198,38 @@ The database is built on **PostgreSQL** (hosted via **Supabase**). It is designe
 | `profile_pic_url` | `text` |  Nullable |
 
 </details>
-
----
-
-
-
+<br>  
   
+## 🔐 Authentication
+
+The authentication system is responsible for securely registering users,
+verifying their credentials, and issuing authentication tokens.   
+### 1- Registration
+Users can create an account by providing their basic information.
+
+The registration process includes:
+- Validating required fields.
+- Validating email format.
+- Checking username and email uniqueness.
+- Validating password strength.
+- Hashing the password using Argon2.
+- Storing the user data in PostgreSQL.
+
+### 2- Login
+Users can authenticate using their username/email and password.
+The login process includes:
+
+- Validating the provided credentials.
+- Retrieving the user from the database.
+- Verifying the password against the stored ``Argon2 hash``.
+- Generating a ``JWT`` after successful authentication.
+
+### 3- JWT Authentication
+After a successful login, the server generates a JWT containing the
+authenticated user's identifier.
+The token is later used to authenticate requests to protected endpoints.
+
+### 4-  Authentication Middleware
+
+
 
