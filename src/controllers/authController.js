@@ -83,47 +83,6 @@ async function register(req,res){
   }
 }
 
-function allDataFilled(userData){
-    if(Object.keys(userData).length<=0)return false;
-    for(let value of Object.values(userData)){
-        if (!value || value.trim()==="")return false;
-    }
-    return true;
-
-} //return T/F
-
-
-async function hashPassword(password) {
-
-    let password_hashed =await argon2.hash(password);
-    return password_hashed;
-}
-
-function validatePasswordStrength(password){
-    /*
-    (?=.{12,}$) => length 12 or more
-    (?=.*[A-Z])(?=.*[a-z]) => has at least uppercase character and lowercase character
-    (?=.*\d) => has at least one digit
-    (?=.*[!@#$%^&*]) => at least one special character
-    (?!.*\s) => has no whitespace
-    */
-    const validFormat = /^(?=.{12,}$)(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])(?!.*\s).*$/;
-
-    return validFormat.test(password);
-
-}
-
-function validEmailFormat(email){
-    const validFormat = /^[^@\s]+@[^@\s]+\.[^@\s]+$/; // [^@\s] => everything except whitespace and @ character
-    return validFormat.test(email);
-}
-
-function validUsernameFormat(username){
-    const validFormat = /^[a-z0-9_.-]{3,20}$/;
-    return validFormat.test(username);
-}
-
-
 //===========================================
 // Login Process
 //===========================================
@@ -184,6 +143,46 @@ async function login(req,res){
 
 }
 
+//========================================
+
+function allDataFilled(userData){
+    if(Object.keys(userData).length<=0)return false;
+    for(let value of Object.values(userData)){
+        if (!value || value.trim()==="")return false;
+    }
+    return true;
+
+} //return T/F
+
+async function hashPassword(password) {
+
+    let password_hashed =await argon2.hash(password);
+    return password_hashed;
+}
+
+function validatePasswordStrength(password){
+    /*
+    (?=.{12,}$) => length 12 or more
+    (?=.*[A-Z])(?=.*[a-z]) => has at least uppercase character and lowercase character
+    (?=.*\d) => has at least one digit
+    (?=.*[!@#$%^&*]) => at least one special character
+    (?!.*\s) => has no whitespace
+    */
+    const validFormat = /^(?=.{12,}$)(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])(?!.*\s).*$/;
+
+    return validFormat.test(password);
+
+}
+
+function validEmailFormat(email){
+    const validFormat = /^[^@\s]+@[^@\s]+\.[^@\s]+$/; // [^@\s] => everything except whitespace and @ character
+    return validFormat.test(email);
+}
+
+function validUsernameFormat(username){
+    const validFormat = /^[a-z0-9_.-]{3,20}$/;
+    return validFormat.test(username);
+}
 
 function createToken(user){
 
@@ -199,6 +198,8 @@ function createToken(user){
     return token;
 
 }
+
+
 
 export default{
     register,

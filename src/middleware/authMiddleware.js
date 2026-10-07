@@ -29,6 +29,8 @@ function authMiddleware(req, res, next) {
 
         req.user = decodedToken;
 
+        next();
+
 
 
     } catch (error) {
@@ -42,4 +44,8 @@ function authMiddleware(req, res, next) {
     //3- If header is provided but the token is invalid or expired
 
 
+}
+
+export default {
+    authMiddleware
 }

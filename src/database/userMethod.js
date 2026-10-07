@@ -147,7 +147,75 @@ async function userExistByID(userID){
     }
 }
 
+async function updateUserInfo(fields,values,userID){ //fields and values should be arrays
+    try{
 
+        const prepareUpdatesAttributes = fields.map((field,index)=>{
+            return `${field} = $${index+1}`; //this will be stored in prepareUpdatesAttributes
+        });
+
+        const sqlFields = prepareUpdatesAttributes.join(", ");
+        const newValues = [...values,userID]//will get [value1,value2,userID] , this called spreading/unpacking
+        const sqlCommand = `UPDATE users SET ${sqlFields} WHERE user_id=$${newValues.length}`;
+
+        const result = await pool.query(sqlCommand,newValues);
+
+        return result.rowCount;
+        
+
+    }
+    catch(error){
+        throw error
+    }
+}
+
+
+async function deleteUser(userID) {
+    try{
+
+        const sqlCommand="DELETE FROM users where user_id=$1";
+        const result = await pool.query(sqlCommand,[userID]);
+        return result.rowCount; // how many rows effected
+
+    }catch(error){
+        throw error;
+    }
+
+
+
+    
+}
+
+async function changePassword(userID,newHashedPassword) {
+    try{
+        const sqlCommand="UPDATE users SET password_hash=$1 WHERE user_id=$2";
+
+        const result = await pool.query(sqlCommand,[newHashedPassword,userID]);//where the newPassword should be hashed
+
+        return result.rowCount;
+
+    }catch(error){
+        throw error;
+    }
+
+    
+}
+
+async function getUserPassword(userID){
+    try{
+        const sqlCommand = "SELECT password_hash FROM users WHERE user_id=$1";
+        const result = await pool.query(sqlCommand,[userID]);
+
+        if(result.rows.length===0)
+            return null;
+
+        return result.rows[0].password_hash;//get the value only
+
+    }catch(error){
+        throw error;
+
+    }
+}
 
 export default {
     createUser,
@@ -156,7 +224,9 @@ export default {
     getUserByID,
     userExistByUsername,
     userExistByEmail,
-    userExistByID
+    userExistByID,
+    getUserPassword,
+    deleteUser
 }
 
 
