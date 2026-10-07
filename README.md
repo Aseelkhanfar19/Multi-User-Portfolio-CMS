@@ -1,4 +1,5 @@
-# 👥 Multi User Portfolio CMS
+# 👥 Multi User Portfolio CMS   
+![Cover](Images/Portfolio%20CMS%20Architecture%20Dashboard.png)
 ## 📄 Overview
 A full-stack portfolio management system designed to allow multiple users to create, manage, and showcase their professional portfolios through a public portfolio website and a private admin dashboard.
 
@@ -39,10 +40,127 @@ I'm building this project from the backend and database up, focusing on understa
 
 ### 🧪 Testing
 
-![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)   
 
-# ⚙️ Backend Structure
-<br>
+## 🌟 Key Features   
+
+1. 🔐 **User Authentication**
+
+   * User registration
+   * User login
+   * Password hashing with Argon2
+   * JWT-based authentication
+   * Token expiration handling
+   * Authentication middleware
+
+2. 👤 **User Account Management**
+
+   * Retrieve user information
+   * Update user information
+   * Delete account with password confirmation
+   * Secure password change
+
+3. 🛡️ **Authorization & Security**
+
+   * Protected routes
+   * User ownership validation
+   * Authentication vs. authorization separation
+   * Input validation
+   * Secure handling of sensitive data
+   * SQL injection prevention
+   * Parameterized SQL queries
+   * Allowed-field validation for updates
+   * Proper HTTP status codes
+   * Centralized error handling
+
+4. 📁 **Portfolio Management**
+
+   * User profile management
+   * Projects management
+   * Technologies and skills management
+   * Work experience management
+   * Education management
+   * Social links management
+
+5. 📌 **Project Management**
+
+   * Create projects
+   * Retrieve projects
+   * Update projects
+   * Delete projects
+   * Pin/unpin projects
+   * Project status management
+   * Project start and completion dates
+   * Technology stack association
+   * Optional GitHub and demo links
+   * User-owned project access control
+
+6. 🗄️ **Database Management**
+
+   * PostgreSQL database
+   * Relational database design
+   * Foreign key relationships
+   * Constraints and data integrity
+   * User-owned data isolation
+   * Cascading behavior for related data
+
+7. 🔄 **API**
+
+   * RESTful API endpoints
+   * CRUD operations
+   * Request validation
+   * Consistent API responses
+   * Error handling
+
+8. 🧪 **Testing**
+
+   * Unit testing
+   * Integration testing
+   * Authentication and authorization tests
+   * Database-related tests
+   * Edge-case testing
+   * Error-handling tests
+   * Mocking external dependencies
+
+9. ⚡ **Real-Time Updates**
+
+   * WebSocket-based updates
+   * Real-time portfolio changes
+   * Synchronization between dashboard and public portfolio
+
+10. ⚙️ **Backend Architecture**
+
+    * Separation of routes, controllers, middleware, and database logic
+    * Environment-based configuration
+    * Separation of concerns
+    * Reusable backend components
+    * Scalable project structure
+
+11. 🚀 **Performance & Reliability**
+
+    * Efficient database queries
+    * Avoid unnecessary database operations
+    * Proper connection-pool management
+    * Race-condition considerations
+    * Transaction handling where required
+    * Robust error and exception handling
+
+
+# ⚙️ Backend Archeticture
+
+## 📁 Folders
+| Directory | Responsibility | 
+|-----------|----------------|   
+| `controllers/` | Handles HTTP requests and responses |   
+| `database/` | Handles database queries and PostgreSQL interaction |   
+| `middleware/` | Handles request processing such as authentication |   
+| `routes/` | Defines API endpoints and connects them to controllers |   
+| `test/` | Contains backend tests |   
+
+
+<br>   
+
+
 
 ## 🗄️ Database Architecture
 ![database schema](Images/supabase-schema-fpstvntbddfwofucujra%20(1).png)     
@@ -230,6 +348,12 @@ authenticated user's identifier.
 The token is later used to authenticate requests to protected endpoints.
 
 ### 4-  Authentication Middleware
+The authentication middleware protects private routes by validating the JWT provided in the Authorization header.   
 
+It:   
+* Extracts the Bearer token from the request.  
+* Verifies the token using the server-side JWT secret.
+* Rejects missing, invalid, or expired tokens with 401 Unauthorized.
+* Attaches the decoded user identity to req.user for use by subsequent controllers.
 
 
