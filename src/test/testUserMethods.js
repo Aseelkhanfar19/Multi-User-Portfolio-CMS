@@ -84,3 +84,29 @@ async function testUserExistByID(mockData){
 
 }
 
+async function testGetPassword(userID) {
+
+    try{
+        const result = await dbMethods.getUserPassword(userID);
+
+        console.log(result);
+    }
+    catch(error){
+        console.log(error);
+    }
+
+}
+
+async function testDeleteUser(userID){
+    try{
+        const result = await dbMethods.deleteUser(userID);
+
+        console.log(result);
+    }
+    catch(error){
+        console.log(error);
+    }
+
+}
+
+testDeleteUser("0110d4fe-0629-4bf5-a763-0b800dd361a5");

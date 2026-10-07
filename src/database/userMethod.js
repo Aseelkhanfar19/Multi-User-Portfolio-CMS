@@ -201,6 +201,21 @@ async function changePassword(userID,newHashedPassword) {
     
 }
 
+async function getUserPassword(userID){
+    try{
+        const sqlCommand = "SELECT password_hash FROM users WHERE user_id=$1";
+        const result = await pool.query(sqlCommand,[userID]);
+
+        if(result.rows.length===0)
+            return null;
+
+        return result.rows[0].password_hash;//get the value only
+
+    }catch(error){
+        throw error;
+
+    }
+}
 
 export default {
     createUser,
@@ -209,7 +224,9 @@ export default {
     getUserByID,
     userExistByUsername,
     userExistByEmail,
-    userExistByID
+    userExistByID,
+    getUserPassword,
+    deleteUser
 }
 
 
