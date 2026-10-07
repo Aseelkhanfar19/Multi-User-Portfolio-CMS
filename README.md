@@ -347,6 +347,12 @@ authenticated user's identifier.
 The token is later used to authenticate requests to protected endpoints.
 
 ### 4-  Authentication Middleware
+The authentication middleware protects private routes by validating the JWT provided in the Authorization header.   
 
+It:   
+* Extracts the Bearer token from the request.  
+* Verifies the token using the server-side JWT secret.
+* Rejects missing, invalid, or expired tokens with 401 Unauthorized.
+* Attaches the decoded user identity to req.user for use by subsequent controllers.
 
 
