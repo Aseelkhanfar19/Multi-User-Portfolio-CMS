@@ -187,7 +187,8 @@ function validUsernameFormat(username){
 function createToken(user){
 
     const payload = {
-        user_id:user.user_id
+        user_id:user.user_id,
+        token_version:user.token_version
     };
     const secretKey = process.env.JWT_SECRET;
     const options = {

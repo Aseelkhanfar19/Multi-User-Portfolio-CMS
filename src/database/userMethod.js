@@ -188,11 +188,11 @@ async function deleteUser(userID) {
 
 async function changePassword(userID,newHashedPassword) {
     try{
-        const sqlCommand="UPDATE users SET password_hash=$1 WHERE user_id=$2";
+        const sqlCommand="UPDATE users SET password_hash=$1 , token_version=token_version + 1  WHERE user_id=$2";
 
         const result = await pool.query(sqlCommand,[newHashedPassword,userID]);//where the newPassword should be hashed
 
-        return result.rowCount;
+        return result.rowCount;//how many rows has been affected
 
     }catch(error){
         throw error;
@@ -217,6 +217,8 @@ async function getUserPassword(userID){
     }
 }
 
+
+
 export default {
     createUser,
     getUserByUsername,
@@ -226,7 +228,8 @@ export default {
     userExistByEmail,
     userExistByID,
     getUserPassword,
-    deleteUser
+    deleteUser,
+    changePassword
 }
 
 

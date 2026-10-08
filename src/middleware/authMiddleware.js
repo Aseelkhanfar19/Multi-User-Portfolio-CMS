@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
+import userDB from "../database/userMethod.js";
 
-function authMiddleware(req, res, next) {
+
+async function authMiddleware(req, res, next) {
     try{
         // Get the token from the request header
         const authHeader = req.headers.authorization; // will get "Bearer <token>" or undefined
@@ -25,7 +27,17 @@ function authMiddleware(req, res, next) {
 
         // Verify the token
         // if the token is valid , return payload , if not valid or expired , throw error
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET); 
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+        const userData = await userDB.getUserByID(decodedToken.user_id); //if null will return null value not []
+        if (!userDB) return res.status(404).json({
+            details:"User not found"
+        });
+        const currentTokenInDB = userData.token_version;
+        if(decodedToken.token_version !== currentTokenInDB) return  res.status(401).json({
+            details:"Invalid token or Expired"
+        })
+
 
         req.user = decodedToken;
 
