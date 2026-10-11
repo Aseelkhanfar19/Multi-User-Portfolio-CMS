@@ -119,8 +119,10 @@ async function updateUserInfo(req,res){
     const updatedData = req.body; //will return object
     const userID = req.user.user_id;
 
-    if(!updatedData)return res.status(404).json({
-        details:"Empty fields"
+    const isValuesEmpty = checkEmptyValues(updatedData);
+
+    if(isValuesEmpty)return res.status(404).json({
+        details:"Empty Fields"
     });
 
     const fields = Object.keys(updatedData).map((key)=>{
@@ -135,6 +137,32 @@ async function updateUserInfo(req,res){
     if(!isFieldsValid) return res.status(400).json({
         details:"Invalid fields provided for update."
     });
+
+    //check if the username is updated , follow the rules and not exist
+    if(fields.includes("username")){
+        const updatedUsername =values[fields.indexOf("username")];
+        const isUsernameValid = usernameValidation(updatedUsername);
+        if(!isUsernameValid)return res.status(400).json({
+            details:"Invalid Username"
+        });
+        const isUsernameExist = await userDB.userExistByUsername(updatedUsername);
+        if(isUsernameExist)return res.status(409).json({
+            details:"Username already taken"
+        });
+    }
+
+    //check if the email is updated , follow the rules and not exist
+    if(fields.includes("email")){
+        const thisEmail =values[fields.indexOf("email")];
+        const isEmailValid = emailValidation(thisEmail);
+        if(!isEmailValid)return res.status(400).json({
+            details:"Invalid Email"
+        });
+        const isEmailExist = await userDB.userExistByEmail(thisEmail);
+        if(isEmailExist)return res.status(409).json({
+            details:"Email already taken"
+        });
+    }
 
     //send fields to DB to update user info 
     const resultOfModification = await userDB.modifyUserData(fields,values,userID);
@@ -155,6 +183,22 @@ function validFields(fields){
 
 }
 
+
+async function emailValidation(email){
+    return authCont.validEmailFormat(email);
+}
+
+async function usernameValidation(username){
+    return authCont.validUsernameFormat(username);
+}
+
+function checkEmptyValues(requestBody){
+    const hasEmptyValues = Object.values(requestBody).some(value => {
+        return typeof value !== "string" || value.trim() === "";
+    });
+
+    return hasEmptyValues;
+}
 //=================================================
 
 
