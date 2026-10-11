@@ -147,7 +147,7 @@ async function userExistByID(userID){
     }
 }
 
-async function updateUserInfo(fields,values,userID){ //fields and values should be arrays
+async function changeUserInfo(fields,values,userID,connection=pool){ //fields and values should be arrays
     try{
 
         const prepareUpdatesAttributes = fields.map((field,index)=>{
@@ -158,7 +158,7 @@ async function updateUserInfo(fields,values,userID){ //fields and values should 
         const newValues = [...values,userID]//will get [value1,value2,userID] , this called spreading/unpacking
         const sqlCommand = `UPDATE users SET ${sqlFields} WHERE user_id=$${newValues.length}`;
 
-        const result = await pool.query(sqlCommand,newValues);
+        const result = await connection.query(sqlCommand,newValues);
 
         return result.rowCount;
         
@@ -167,6 +167,46 @@ async function updateUserInfo(fields,values,userID){ //fields and values should 
     catch(error){
         throw error
     }
+}
+
+async function modifyUserData(fields,values,userID){//will recieve arrays and user id and will use in controller
+    const client = await pool.connect();
+    try{
+        let changedFields =[];
+        await client.query("BEGIN");//open transaction
+        //this will lock the updated row until we commit the changes
+        const sqlCommand ="SELECT username,email,first_name,last_name FROM users WHERE user_id = $1 FOR UPDATE";
+        const result = await client.query(sqlCommand,[userID]);
+
+        /*comapre values and detect which one is changed , we used this logic 
+        here to pass the same connection*/
+        changedFields= fields.filter((field,index)=>{
+            return values[index] !== result.rows[0][field] //keep only the changed values 
+        });
+
+        let changedValues = changedFields.map((field)=>{
+
+            let index = fields.indexOf(field); // find index of the key 
+            return values[index];
+        });
+
+
+        let updateStatus=0
+        if(changedFields.length>0){
+            updateStatus = await changeUserInfo(changedFields,changedValues,userID,client);
+        }
+        await client.query("COMMIT"); //this command is important to unlock the row
+        return updateStatus; // return 0 OR 1
+
+    }catch(error){
+        await client.query("ROLLBACK");
+        throw error;
+
+    }finally{
+        client.release();
+    }
+
+
 }
 
 
@@ -229,7 +269,8 @@ export default {
     userExistByID,
     getUserPassword,
     deleteUser,
-    changePassword
+    changePassword,
+    modifyUserData
 }
 
 

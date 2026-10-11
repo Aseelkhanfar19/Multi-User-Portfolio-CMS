@@ -112,11 +112,55 @@ async function changePassword(req,res){
 
 }
 
+
+//this for changing the basic user info , not profile
+async function updateUserInfo(req,res){
+    
+    const updatedData = req.body; //will return object
+    const userID = req.user.user_id;
+
+    if(!updatedData)return res.status(404).json({
+        details:"Empty fields"
+    });
+
+    const fields = Object.keys(updatedData).map((key)=>{
+        return key;
+    }); //get fields in array
+    const values = Object.values(updatedData).map((value)=>{
+        return value; //get value of fields in array
+    });
+
+    //check that all fields is safe to modify it , before sending the data to DB .
+    const isFieldsValid= validFields(fields);
+    if(!isFieldsValid) return res.status(400).json({
+        details:"Invalid fields provided for update."
+    });
+
+    //send fields to DB to update user info 
+    const resultOfModification = await userDB.modifyUserData(fields,values,userID);
+
+    return res.status(201).json({
+        details:resultOfModification
+    });
+
+}
+
+
+function validFields(fields){
+    const allowedFields = ["username","email","first_name","last_name"];
+
+    return fields.every((field)=>{
+        return allowedFields.includes(field);
+});
+
+}
+
 //=================================================
 
 
 
 export default{
     deleteUser,
-    changePassword
+    changePassword,
+    updateUserInfo
 }

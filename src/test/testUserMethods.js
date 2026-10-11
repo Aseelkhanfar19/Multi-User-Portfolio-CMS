@@ -97,6 +97,7 @@ async function testGetPassword(userID) {
 
 }
 
+
 async function testDeleteUser(userID){
     try{
         const result = await dbMethods.deleteUser(userID);
@@ -109,4 +110,20 @@ async function testDeleteUser(userID){
 
 }
 
-testDeleteUser("0110d4fe-0629-4bf5-a763-0b800dd361a5");
+
+async function testUpdateData(fields,values,userID){
+
+    try{
+        const res = await dbMethods.modifyUserData(fields,values,userID);
+
+        console.log(res);
+
+    }
+    catch(error){
+        console.log(error);
+    }
+
+}
+
+testUpdateData(["username","email",'first_name',"last_name"],["lara01",'test@example.comm559','lolo',"khanfar"],"5b232b2c-303a-4cb6-a0e0-f11052d39be0");
+//a72c56a1-cbd2-4c48-8d12-8a8b204d799a
