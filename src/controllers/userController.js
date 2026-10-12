@@ -7,6 +7,11 @@ async function deleteUser(req,res){
     try{
         const enteredPassword = req.body.password;
         const userID = req.user.user_id;
+        
+        if(!userID) return res.status(404).json({
+            details:"User not found"
+        });
+
         if (typeof enteredPassword !== "string"  || !enteredPassword.trim())
             return res.status(422).json({
             details:"Can not proceed empty value"
