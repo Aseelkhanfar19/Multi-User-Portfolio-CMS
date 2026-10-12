@@ -1,6 +1,4 @@
-//This file is for user Management :
-// Delete user , update user , insertProfileInfo, change password,getProfileInfo
-
+//This file is for user Management 
 import userDB from "../database/userMethod.js";
 import argon2 from "argon2";
 import authCont from "./authController.js";
@@ -106,73 +104,79 @@ async function changePassword(req,res){
     }
     catch(error){
         return res.status(500).json({
-            details:"Internal Server Error"
+            details:`Internal Server Error,${error}`
         });
     }
 
 }
-
 
 //this for changing the basic user info , not profile
 async function updateUserInfo(req,res){
-    
-    const updatedData = req.body; //will return object
-    const userID = req.user.user_id;
+    try{
 
-    const isValuesEmpty = checkEmptyValues(updatedData);
-
-    if(isValuesEmpty)return res.status(404).json({
-        details:"Empty Fields"
-    });
-
-    const fields = Object.keys(updatedData).map((key)=>{
-        return key;
-    }); //get fields in array
-    const values = Object.values(updatedData).map((value)=>{
-        return value; //get value of fields in array
-    });
-
-    //check that all fields is safe to modify it , before sending the data to DB .
-    const isFieldsValid= validFields(fields);
-    if(!isFieldsValid) return res.status(400).json({
-        details:"Invalid fields provided for update."
-    });
-
-    //check if the username is updated , follow the rules and not exist
-    if(fields.includes("username")){
-        const updatedUsername =values[fields.indexOf("username")];
-        const isUsernameValid = usernameValidation(updatedUsername);
-        if(!isUsernameValid)return res.status(400).json({
-            details:"Invalid Username"
+        const updatedData = req.body; //will return object
+        const userID = req.user.user_id;
+        if(!userID) return res.status(404).json({
+            details:"User not found"
         });
-        const isUsernameExist = await userDB.userExistByUsername(updatedUsername);
-        if(isUsernameExist)return res.status(409).json({
-            details:"Username already taken"
+
+        const isValuesEmpty = checkEmptyValues(updatedData);
+
+        if(isValuesEmpty)return res.status(422).json({
+            details:"Empty Fields"
         });
-    }
 
-    //check if the email is updated , follow the rules and not exist
-    if(fields.includes("email")){
-        const thisEmail =values[fields.indexOf("email")];
-        const isEmailValid = emailValidation(thisEmail);
-        if(!isEmailValid)return res.status(400).json({
-            details:"Invalid Email"
+        const fields = Object.keys(updatedData).map((key)=>{
+            return key;
+        }); //get fields in array
+        const values = Object.values(updatedData).map((value)=>{
+            return value; //get value of fields in array
         });
-        const isEmailExist = await userDB.userExistByEmail(thisEmail);
-        if(isEmailExist)return res.status(409).json({
-            details:"Email already taken"
+
+        //check that all fields is safe to modify it , before sending the data to DB .
+        const isFieldsValid = validFields(fields);
+        if(!isFieldsValid) return res.status(400).json({
+            details:"Invalid fields provided for update."
         });
-    }
 
-    //send fields to DB to update user info 
-    const resultOfModification = await userDB.modifyUserData(fields,values,userID);
+        //check if the username is updated , follow the rules and not exist
+        if(fields.includes("username")){
+            const updatedUsername = values[fields.indexOf("username")];
+            const isUsernameValid = usernameValidation(updatedUsername);
+            if(!isUsernameValid)return res.status(400).json({
+                details:"Invalid Username"
+            });
+            const isUsernameExist = await userDB.userExistByUsername(updatedUsername,userID);
+            if(isUsernameExist)return res.status(409).json({
+                details:"Username already taken"
+            });
+        }
 
-    return res.status(201).json({
-        details:resultOfModification
-    });
+        //check if the email is updated , follow the rules and not exist
+        if(fields.includes("email")){
+            const thisEmail = values[fields.indexOf("email")];
+            const isEmailValid = emailValidation(thisEmail);
+            if(!isEmailValid)return res.status(400).json({
+                details:"Invalid Email"
+            });
+            const isEmailExist = await userDB.userExistByEmail(thisEmail,userID);
+            if(isEmailExist)return res.status(409).json({
+                details:"Email is already taken"
+            });
+        }
 
+        //send fields to DB to update user info 
+        const resultOfModification = await userDB.modifyUserData(fields,values,userID);
+
+        return res.status(200).json({
+            details:resultOfModification
+        });
+        }catch(error){
+            return res.status(500).json({
+                details:error
+            });
+        }
 }
-
 
 function validFields(fields){
     const allowedFields = ["username","email","first_name","last_name"];
@@ -183,12 +187,11 @@ function validFields(fields){
 
 }
 
-
-async function emailValidation(email){
+function emailValidation(email){
     return authCont.validEmailFormat(email);
 }
 
-async function usernameValidation(username){
+function usernameValidation(username){
     return authCont.validUsernameFormat(username);
 }
 

@@ -30,7 +30,7 @@ async function authMiddleware(req, res, next) {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
         const userData = await userDB.getUserByID(decodedToken.user_id); //if null will return null value not []
-        if (!userDB) return res.status(404).json({
+        if (!userData) return res.status(404).json({
             details:"User not found"
         });
         const currentTokenInDB = userData.token_version;

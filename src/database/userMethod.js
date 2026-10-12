@@ -1,4 +1,5 @@
 
+import { error } from "node:console";
 import pool from "./db.js";
 //METHODS FOR CREATION TOMORROW
 
@@ -100,12 +101,21 @@ async function getUserByID(userID){
 }
 
 
-async function userExistByUsername(EnterdUsername){
+async function userExistByUsername(EnterdUsername,userID=null){
     try{
-        const sqlCommand = 'SELECT EXISTS (SELECT 1 FROM users WHERE username=$1);';
-        const value = [EnterdUsername];
+        let values=[];
+        let sqlCommand="";
 
-        const result = await pool.query(sqlCommand,value);
+        if(!userID){
+            sqlCommand = 'SELECT EXISTS (SELECT 1 FROM users WHERE username=$1);';
+            values = [EnterdUsername]
+        }else{
+            sqlCommand='SELECT EXISTS (SELECT 1 FROM users WHERE username=$1 and user_id <> $2)';
+            values = [EnterdUsername,userID];
+        }
+
+
+        const result = await pool.query(sqlCommand,values);
 
         return result.rows[0].exists; //return boolean result
 
@@ -116,12 +126,22 @@ async function userExistByUsername(EnterdUsername){
 }
 
 
-async function userExistByEmail(EnterdEmail){
+async function userExistByEmail(EnterdEmail,userID=null){
     try{
-        const sqlCommand = 'SELECT EXISTS (SELECT 1 FROM users WHERE email=$1);';
-        const value = [EnterdEmail];
+        let sqlCommand = ""
+        let values = [];
+        if(!userID){
+            sqlCommand='SELECT EXISTS (SELECT 1 FROM users WHERE email=$1);';
+            values = [EnterdEmail];
+        }
+        else{
+            sqlCommand='SELECT EXISTS (SELECT 1 FROM users WHERE email=$1 and user_id <>$2);';
+            values = [EnterdEmail,userID];
 
-        const result = await pool.query(sqlCommand,value);
+        }
+
+
+        const result = await pool.query(sqlCommand,values);
 
         return result.rows[0].exists; //return boolean result
 
@@ -177,6 +197,8 @@ async function modifyUserData(fields,values,userID){//will recieve arrays and us
         //this will lock the updated row until we commit the changes
         const sqlCommand ="SELECT username,email,first_name,last_name FROM users WHERE user_id = $1 FOR UPDATE";
         const result = await client.query(sqlCommand,[userID]);
+
+        if(result.rowCount===0)throw new Error("User not found");
 
         /*comapre values and detect which one is changed , we used this logic 
         here to pass the same connection*/
