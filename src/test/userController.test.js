@@ -1,9 +1,7 @@
 import { describe, test, expect , vi } from "vitest";
-import authCont from "../controllers/authController.js";
 import userCont from "../controllers/userController.js";
 import userDB from "../database/userMethod.js";
 import "dotenv/config";
-import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 
 
