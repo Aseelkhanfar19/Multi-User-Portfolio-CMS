@@ -11,7 +11,7 @@ load and store values in proccess , this is CommonJS
    require -> load 
    config -> read the .env and load the variables to process.env
 */ 
-dotenv.config();
+dotenv.config({ path: "back-end/.env" });
 
 
 const pool = new Pool(

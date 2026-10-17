@@ -1,7 +1,14 @@
-import authRouter from "./routes/authRoutes.js";
-import userRouter from "./routes/userRoutes.js";
+import authRouter from "./src/routes/authRoutes.js";
+import userRouter from "./src/routes/userRoutes.js";
 import express from "express";
+import dotenv from "dotenv";
 
+
+
+console.log(
+  "Database password loaded:",
+  typeof process.env.DB_PASSWORD === "string"
+);
 
 
 const app = express();

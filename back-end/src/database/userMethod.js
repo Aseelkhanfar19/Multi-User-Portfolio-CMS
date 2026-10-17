@@ -1,5 +1,3 @@
-
-import { error } from "node:console";
 import pool from "./db.js";
 //METHODS FOR CREATION TOMORROW
 

@@ -22,5 +22,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src", "back-end/src/controllers", "back-end/src/middleware", "back-end/src/database", "back-end/src/routes", "back-end/src/test", "back-end/server.js", "front-end/src/components", "front-end/src/main.tsx"]
 }
