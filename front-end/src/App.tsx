@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import Navbar from '../front-end/src/components/navbar';
-import IntroBox from '../front-end/src/components/introBox';
+import Navbar from '../src/components/navbar.tsx';
+import IntroBox from '../src/components/introBox.tsx';
 import './App.css';
-import Lists from '../front-end/src/components/lists';
-import Hero from '../front-end/src/components/hero';
+import Lists from '../src/components/lists.tsx';
+import Hero from '../src/components/hero.tsx';
 
 
 
