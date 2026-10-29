@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import Navbar from '../src/components/navbar.tsx';
-import IntroBox from '../src/components/introBox.tsx';
 import './App.css';
-import Lists from '../src/components/lists.tsx';
-import Hero from '../src/components/hero.tsx';
+import ResponsiveContainer from './components/ResponsiveContainer';
+import Container from './components/container';
+import heroBg from "./assets/hero-bg.jpg";
+import Navbar from './components/navbar';
 
 
 
@@ -13,12 +13,21 @@ function App() {
 
   return (
   <>
-    <IntroBox>
-          <Navbar />
-          <Hero />
-    </IntroBox>
-  </>
+  <section>
+    <Container className='h-auto' style={
+      {
+        backgroundImage:`url(${heroBg})`,
+        backgroundPosition:"center",
+        backgroundSize:"cover"
+    }}>
+      <Navbar/>
 
+
+   
+      
+    </Container>
+  </section>
+  </>
 );
 }
 

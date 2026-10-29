@@ -1,66 +1,38 @@
+import Container from "./container";
 
-import { useState } from 'react';
-import menuIcon from "../assets/dots.png";
-import Lists from './lists';
+let navItem = ["Discover","About","Contact us","Create My Portfolio","Login"]
 
+function Navbar(){
+    return(
+        <Container direction="horizontal">
+        <nav className="flex w-full items-center justify-between py-4 text-white">
+            {/* Bold & Large Logo */}
+            <h1 className="text-3xl font-bold tracking-tight">Portfolio</h1>
 
-function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const links = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Skills", href: "#skills" },
-    { name: "Projects", href: "#projects" },
-  ];
+            {/* Navigation Items */}
+            <ul className="flex items-center gap-10 text-lg font-medium">
+            {navItem.map((item) => {
+                const isButton = item === "Create My Portfolio";
+                return (
+                <li key={item}>
+                    <a
+                    href="#"
+                    className={
+                        isButton
+                        ? "rounded bg-[#F44336] px-4 py-2 font-semibold text-white transition hover:bg-[#d32f2f]"
+                        : "transition hover:text-gray-300"
+                    }
+                    >
+                    {item}
+                    </a>
+                </li>
+                );
+            })}
+            </ul>
+        </nav>
+        </Container>
+    );
 
-  return (
-    <div className="relative">
-    <nav className="sticky top-0 z-50 px-6">
-      <div className="mx-auto flex max-w-6xl items-center justify-between rounded-2xl border border-gray-200 bg-white/90 px-6 py-3 shadow-sm backdrop-blur-md">
-
-        {/* Logo */}
-        <a
-          href="#home"
-          className="text-xl font-bold tracking-tight text-gray-900"
-        >
-          Aseel<span className="text-blue-600">Khanfar</span>
-        </a>
-
-        {/* Navigation */}
-        <ul className="hidden items-center gap-12 md:flex">
-          {links.map((link) => (
-            <li key={link.name}>
-              <a
-                href={link.href}
-                className="text-md font-medium text-gray-600 transition-colors duration-200 hover:text-gray-900"
-              >
-                {link.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        {/* CTA */}
-        <a
-          href="#contact"
-          className="hidden rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-blue-600 md:block"
-        >
-          Let's Talk
-        </a>
-        <button className='flex w-6 h-6 md:hidden rounded-lg hover:scale-110 transition duration-200' onClick={(e)=>{
-          e.stopPropagation();
-          setMenuOpen(!menuOpen);
-        }
-        }>
-          <img src={ menuIcon } />
-        </button>
-
-      </div>
-    </nav>
-    {menuOpen && <Lists />}
-    </div>
-  );
-  
 }
 
 export default Navbar;
