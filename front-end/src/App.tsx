@@ -1,35 +1,22 @@
-import { useState } from 'react';
-import './App.css';
-import ResponsiveContainer from './components/ResponsiveContainer';
-import Container from './components/container';
+import "./App.css";
 import heroBg from "./assets/hero-bg.jpg";
-import Navbar from './components/navbar';
-
-
-
+import Navbar from "./components/navbar";
+import Hero from "./components/hero";
 
 function App() {
-  
-
   return (
-  <>
-  <section>
-    <Container className='h-auto' style={
-      {
-        backgroundImage:`url(${heroBg})`,
-        backgroundPosition:"center",
-        backgroundSize:"cover"
-    }}>
-      <Navbar/>
-
-
-   
-      
-    </Container>
-  </section>
-  </>
-);
+    <section
+      className="w-full min-h-[500px] md:min-h-[600px] bg-slate-900"
+      style={{
+        backgroundImage: `url(${heroBg})`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+      }}
+    >
+      <Navbar />
+      <Hero />
+    </section>
+  );
 }
 
-
-export default App
+export default App;
