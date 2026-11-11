@@ -9,8 +9,7 @@ function Hero() {
         <p className="text-base sm:text-lg text-gray-200 max-w-md">
           Create your portfolio, showcase your projects, and share your journey.
         </p>
-
-        <div className="flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-10 mt-4">
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center gap-5 sm:gap-10 mt-4">
           <a href="#" className="font-semibold underline underline-offset-2 hover:text-gray-300 transition-colors duration-150">
             Login to My Porfolio
           </a>
