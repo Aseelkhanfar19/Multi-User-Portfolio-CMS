@@ -1,7 +1,11 @@
 import { useState } from "react";
 import Container from "./container";
 
-const navItems = ["Discover", "About", "Contact us"];
+const navItems = [
+  {name:"Discover",id:"discover"}, 
+  {name:"About",id:"footer"}, 
+  {name:"Contact us",id:"contact"}
+];
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,9 +23,9 @@ function Navbar() {
           <div className="hidden md:flex items-center gap-8">
             <ul className="flex items-center gap-8 text-base font-medium">
               {navItems.map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-gray-300 transition-colors duration-150">
-                    {item}
+                <li key={item.id}>
+                  <a href={`#${item.id}`} className="hover:text-gray-300 transition-colors duration-150">
+                    {item.name}
                   </a>
                 </li>
               ))}
@@ -70,12 +74,12 @@ function Navbar() {
         <div className="bg-black/80 backdrop-blur-md rounded-md p-5 flex flex-col gap-4 text-base font-medium">
           {navItems.map((item) => (
             <a
-              key={item}
-              href="#"
+              key={item.id}
+              href={`#${item.id}`}
               onClick={() => setIsOpen(false)}
               className="hover:text-gray-300 transition-colors duration-150"
             >
-              {item}
+              {item.name}
             </a>
           ))}
           <hr className="border-white/20" />

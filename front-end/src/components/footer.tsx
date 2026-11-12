@@ -49,7 +49,7 @@ const socials = [
 
 function Footer() {
   return (
-    <footer className="w-full bg-[#080B0E] text-white py-12 sm:py-16">
+    <footer id="footer" className="w-full bg-[#080B0E] text-white py-12 sm:py-16">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <h2 className="text-center text-3xl sm:text-4xl font-extrabold tracking-tight mb-10 sm:mb-14">

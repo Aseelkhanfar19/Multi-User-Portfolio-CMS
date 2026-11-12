@@ -20,6 +20,7 @@ function App() {
       <Navbar />
       <Hero />
     </section>
+    
     <SearchBar />
     <ContactUs />
     <Footer />

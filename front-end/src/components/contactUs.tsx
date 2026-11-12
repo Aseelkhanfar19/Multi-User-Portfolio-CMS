@@ -23,7 +23,7 @@ function ContactUs({ onSubmit }: ContactUsProps) {
   };
 
   return (
-    <section className="w-full bg-[#f5f5f5] py-12 sm:py-16 lg:py-20">
+    <section id="contact" className="w-full bg-[#f5f5f5] py-12 sm:py-16 lg:py-20">
       <h2 className="text-center text-lg sm:text-xl font-semibold text-gray-600 px-4 mb-8 sm:mb-10">
         Contact Us
       </h2>
