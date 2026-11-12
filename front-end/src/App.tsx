@@ -3,6 +3,8 @@ import heroBg from "./assets/hero-bg.jpg";
 import Navbar from "./components/navbar";
 import Hero from "./components/hero";
 import SearchBar from "./components/searchBar";
+import ContactUs from "./components/contactUs";
+import Footer from "./components/footer";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
       <Hero />
     </section>
     <SearchBar />
+    <ContactUs />
+    <Footer />
     </>
   );
 }

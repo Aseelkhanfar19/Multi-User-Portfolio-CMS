@@ -24,7 +24,7 @@ function SearchBar({ onSearch }: SearchBarProps) {
         <ResponsiveContainer className="md:gap-10">
           <input
             type="text"
-            value={query}
+            value={query} 
             onChange={(e) => setQuery(e.target.value)}
             placeholder="username , user id ....."
             aria-label="Search developers"
