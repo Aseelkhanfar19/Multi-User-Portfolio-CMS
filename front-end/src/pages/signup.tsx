@@ -1,6 +1,7 @@
+import signupIllustration from "../assets/signup-illustration.svg";
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import signupIllustration from "../assets/signup-illustration.svg";
+
 
 interface SignUpData {
   firstName: string;

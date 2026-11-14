@@ -10,12 +10,12 @@ function Hero() {
           Create your portfolio, showcase your projects, and share your journey.
         </p>
         <div className="flex flex-col-reverse sm:flex-row sm:items-center gap-5 sm:gap-10 mt-4">
-          <a href="#" className="font-semibold underline underline-offset-2 hover:text-gray-300 transition-colors duration-150">
-            Login to My Porfolio
+          <a href="/login" className="font-semibold underline underline-offset-2 hover:text-gray-300 transition-colors duration-150">
+            Login to My Portfolio
           </a>
 
           <a
-            href="#"
+            href="/signup"
             className="inline-flex items-center justify-center gap-2 bg-[#F44336] hover:bg-[#d32f2f] text-white px-6 py-3 rounded-sm font-medium transition-colors duration-150"
           >
             Create New Account

@@ -15,7 +15,7 @@ function Navbar() {
       <div className="max-w-7xl mx-auto">
         <Container direction="horizontal" className="items-center justify-between">
           {/* Logo */}
-          <a href="#" className="text-2xl md:text-3xl font-extrabold tracking-tight">
+          <a href="/" className="text-2xl md:text-3xl font-extrabold tracking-tight">
             Portfolio
           </a>
 
@@ -33,12 +33,12 @@ function Navbar() {
 
             <div className="flex items-center gap-4 text-sm font-medium">
               <a
-                href="#"
+                href="/signup"
                 className="bg-[#F44336] hover:bg-[#d32f2f] text-white px-4 py-2 rounded-sm transition-colors duration-150 font-semibold"
               >
                 Create My Portfolio
               </a>
-              <a href="#" className="hover:text-gray-300 transition-colors duration-150">
+              <a href="/login" className="hover:text-gray-300 transition-colors duration-150">
                 login
               </a>
             </div>
