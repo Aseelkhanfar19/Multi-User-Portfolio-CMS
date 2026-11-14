@@ -41,7 +41,7 @@ function SignIn({ onSubmit }: SignInProps) {
           </h1>
           <p className="text-center text-xs sm:text-sm text-black font-medium mt-3 sm:mt-4">
             Don't have account?{" "}
-            <a href="#" className="font-semibold text-[#15008A] hover:underline">
+            <a href="/signup" className="font-semibold text-[#15008A] hover:underline">
               Sign up
             </a>
           </p>
