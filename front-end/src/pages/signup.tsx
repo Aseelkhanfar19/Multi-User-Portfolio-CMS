@@ -4,45 +4,48 @@ import type { ChangeEvent, FormEvent } from "react";
 
 
 interface SignUpData {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   username: string;
   email: string;
   password: string;
 }
 
-interface SignUpProps {
-  onSubmit?: (data: SignUpData) => void;
-}
+
 
 const fieldClasses =
   "w-full px-3 py-2.5 text-sm sm:text-base text-gray-800 bg-white placeholder:text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#15008A]";
 
-function SignUp({ onSubmit }: SignUpProps) {
+
+
+function SignUp() {
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+
+
   const [error, setError] = useState("");
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    if (error) setError("");
-  };
+  function handleChange(e:React.ChangeEvent<HTMLInputElement>){
+    const {name , value} = e.target;
+    setForm((prev)=>({
+      ...prev,
+      [name]:value // we put name in [] to tell js that the name is an exist variable not a new key called name .. 
+    })
+  );//end of set form
+  }
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-    const { confirmPassword, ...data } = form;
-    onSubmit?.(data);
-  };
+  function handleSubmitForm(e:React.SubmitEvent<HTMLButtonElement>){
+    const formData = {...form}; // copy the data from useState variable
+    
+
+  }
+
 
   return (
     <section className="w-full min-h-screen bg-white flex items-center justify-center px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
@@ -59,42 +62,42 @@ function SignUp({ onSubmit }: SignUpProps) {
             </a>
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4 mt-8 sm:mt-10">
+          <form  className="flex flex-col gap-3 sm:gap-4 mt-8 sm:mt-10">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label htmlFor="firstName" className="sr-only">First Name</label>
-                <input id="firstName" name="firstName" type="text" required autoComplete="given-name"
-                  value={form.firstName} onChange={handleChange} placeholder="First Name" className={fieldClasses} />
+                <input id="firstName" name="first_name" type="text" required autoComplete="given-name"
+                   placeholder="First Name" className={fieldClasses} onChange={handleChange} value={form.first_name}/>
               </div>
               <div>
                 <label htmlFor="lastName" className="sr-only">Last Name</label>
-                <input id="lastName" name="lastName" type="text" required autoComplete="family-name"
-                  value={form.lastName} onChange={handleChange} placeholder="Last Name" className={fieldClasses} />
+                <input id="lastName" name="last_name" type="text" required autoComplete="family-name"
+                  placeholder="Last Name" className={fieldClasses} onChange={handleChange} value={form.last_name}/>
               </div>
             </div>
 
             <div>
               <label htmlFor="username" className="sr-only">Username</label>
               <input id="username" name="username" type="text" required autoComplete="username"
-                value={form.username} onChange={handleChange} placeholder="Username" className={fieldClasses} />
+                placeholder="Username" className={fieldClasses} onChange={handleChange} value={form.username} />
             </div>
 
             <div>
               <label htmlFor="email" className="sr-only">Email</label>
               <input id="email" name="email" type="email" required autoComplete="email"
-                value={form.email} onChange={handleChange} placeholder="Email" className={fieldClasses} />
+                placeholder="Email" className={fieldClasses} value={form.email} onChange={handleChange} />
             </div>
 
             <div>
               <label htmlFor="password" className="sr-only">Password</label>
               <input id="password" name="password" type="password" required autoComplete="new-password"
-                value={form.password} onChange={handleChange} placeholder="Password" className={fieldClasses} />
+                 placeholder="Password" className={fieldClasses}  value={form.password} onChange={handleChange}/>
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
               <input id="confirmPassword" name="confirmPassword" type="password" required autoComplete="new-password"
-                value={form.confirmPassword} onChange={handleChange} placeholder="Confirm Password" className={fieldClasses} />
+                 placeholder="Confirm Password" className={fieldClasses} value={form.confirmPassword} onChange={handleChange}/>
             </div>
 
             {error && (
@@ -106,7 +109,7 @@ function SignUp({ onSubmit }: SignUpProps) {
             <button
               type="submit"
               className="w-full sm:w-3/4 self-center mt-4 sm:mt-6 bg-[#15008A] hover:bg-[#0f0066] text-white py-2.5 sm:py-3 rounded-md text-base sm:text-lg tracking-wide font-medium transition-colors duration-150"
-            >
+             onSubmit={handleSubmitForm}>
               Continue
             </button>
           </form>
