@@ -10,11 +10,12 @@ export async function sendRequest(endpoint:string, method: string, body?: any) {
     if(!BASE_URL) {
         throw new Error("VITE_API_BASE_URL is not defined in the environment variables.");
     }
+    console.log("signing")
 
     // Set up the request options, including the HTTP method and headers
     if(!method || !endpoint) throw new Error("HTTP method or endpoint is not defined.");
     const url = `${BASE_URL}${endpoint}`;// Construct the full URL by appending the endpoint to the base URL
-
+    
     const response = await fetch(
         url,
         {

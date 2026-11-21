@@ -1,15 +1,11 @@
 import signupIllustration from "../assets/signup-illustration.svg";
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+import type { SignUpData } from "../types/dataTypes"
+import {signup, login} from "../services/auth"
 
 
-interface SignUpData {
-  first_name: string;
-  last_name: string;
-  username: string;
-  email: string;
-  password: string;
-}
+
 
 
 
@@ -19,17 +15,21 @@ const fieldClasses =
 
 
 function SignUp() {
-  const [form, setForm] = useState({
+
+  const initialForm : SignUpData = {
     first_name: "",
     last_name: "",
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
-  });
+    confirmPassword: ""
+  };
+
+  const [form, setForm] = useState(initialForm);
 
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e:React.ChangeEvent<HTMLInputElement>){
     const {name , value} = e.target;
@@ -40,10 +40,27 @@ function SignUp() {
   );//end of set form
   }
 
-  function handleSubmitForm(e:React.SubmitEvent<HTMLButtonElement>){
+  async function handleSubmitForm(e:React.FormEvent<HTMLFormElement>){
+    e.preventDefault();//prevent refresh and clear inputs after submit
+    setLoading(true);
     const formData = {...form}; // copy the data from useState variable
-    
+    try{
+      await signup(formData);
+      console.log("finished");
+      console.log(loading);
+      setLoading(false);
+    }
+    catch(error){
+      console.log(error);
+      setLoading(false);
 
+    }
+
+  }
+
+  function handleResetButton(e:React.MouseEvent<HTMLButtonElement>){
+    setForm(initialForm);
+    setError("");
   }
 
 
@@ -62,7 +79,7 @@ function SignUp() {
             </a>
           </p>
 
-          <form  className="flex flex-col gap-3 sm:gap-4 mt-8 sm:mt-10">
+          <form  className="flex flex-col gap-3 sm:gap-4 mt-8 sm:mt-10" onSubmit={handleSubmitForm}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label htmlFor="firstName" className="sr-only">First Name</label>
@@ -108,10 +125,11 @@ function SignUp() {
 
             <button
               type="submit"
-              className="w-full sm:w-3/4 self-center mt-4 sm:mt-6 bg-[#15008A] hover:bg-[#0f0066] text-white py-2.5 sm:py-3 rounded-md text-base sm:text-lg tracking-wide font-medium transition-colors duration-150"
-             onSubmit={handleSubmitForm}>
-              Continue
+              className="w-full sm:w-3/4 self-center mt-4 sm:mt-6 bg-[#15008A] hover:bg-[#0f0066] text-white py-2.5 sm:py-3 rounded-md text-base sm:text-lg tracking-wide font-medium transition-colors duration-150" disabled={loading}
+             >
+              {loading?"Loading":"Continue"}
             </button>
+            <button type="reset" className="w-full sm:w-3/4 self-center mt-4 sm:mt-6 bg-[#9795a3] hover:bg-[#6c6884] text-white py-2.5 sm:py-3 rounded-md text-base sm:text-lg tracking-wide font-medium transition-colors duration-150" onClick={handleResetButton}>Clear</button>
           </form>
         </div>
 
