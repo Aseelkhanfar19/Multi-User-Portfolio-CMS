@@ -27,7 +27,6 @@ export async function sendRequest(endpoint:string, method: string, body?: any) {
         }
     );
 
-    console.log(response);
     const data = await response.json();
 
     // Check if the response is successful (status code 200-299)

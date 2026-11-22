@@ -45,10 +45,6 @@ async function register(req,res){
                 details:"Email is exist"
             });
 
-
-        console.log(`pass ${userData.password} and con pass ${userData.conPassword}`)
-
-        
         if(userData.password !== userData.conPassword)
             return res.status(400).json({
                 details:"Passwords do not match"

@@ -1,24 +1,51 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import signinIllustration from "../assets/signin-illustration.svg";
+import type{ loginData } from "../types/dataTypes";
+import {signup, login} from "../services/auth"
 
-interface SignInProps {
-  onSubmit?: (data: { identifier: string; password: string }) => void;
-}
 
 const fieldClasses =
   "w-full px-3 py-2.5 text-sm sm:text-base text-gray-800 bg-white placeholder:text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#15008A]";
 
-function SignIn({ onSubmit }: SignInProps) {
-  const [form, setForm] = useState({ identifier: "", password: "" });
+const initialData : loginData ={identifier: "", password: "" };
+
+function SignIn() {
+
+  const [form, setForm] = useState(initialData);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success , setSuccess] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
+    setLoading(true);
     e.preventDefault();
-    onSubmit?.(form);
+    console.log(`Data ready to send : ${form}`);
+    try{ 
+    const userData = await login(form); 
+    setLoading(false);
+    setSuccess(true);
+      if(userData.details==="Login Successful"){
+        setSuccess(true)
+        setError("");
+      };
+    }
+    catch(errorMsg){
+      if(errorMsg instanceof Error){
+        setError(errorMsg.message);
+        
+      }
+      else{
+        setError("Something went wrong , please try again later!");
+      }
+      console.log(error);
+      setLoading(false);
+    }
+
   };
 
   return (
@@ -47,6 +74,15 @@ function SignIn({ onSubmit }: SignInProps) {
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4 mt-8 sm:mt-10">
+            {error && (
+              <p
+                role="alert"
+                className="w-full bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm leading-relaxed rounded-md p-3 sm:p-4"
+              >
+                {error}
+              </p>
+            )
+            } 
             <div>
               <label htmlFor="identifier" className="sr-only">Email or Username</label>
               <input
@@ -85,10 +121,10 @@ function SignIn({ onSubmit }: SignInProps) {
             </a>
 
             <button
-              type="submit"
+              type="submit" disabled={loading}
               className="w-full sm:w-3/4 self-center mt-4 sm:mt-6 bg-[#15008A] hover:bg-[#0f0066] text-white py-2.5 sm:py-3 rounded-md text-base sm:text-lg tracking-wide font-medium transition-colors duration-150"
             >
-              Continue
+              {loading?"Loading":"Continue"}
             </button>
           </form>
         </div>
