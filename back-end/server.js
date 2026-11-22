@@ -2,6 +2,7 @@ import authRouter from "./src/routes/authRoutes.js";
 import userRouter from "./src/routes/userRoutes.js";
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 
 
 
@@ -12,6 +13,7 @@ console.log(
 
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 const PORT = 5000;
 

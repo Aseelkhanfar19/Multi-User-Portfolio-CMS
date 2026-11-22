@@ -4,7 +4,7 @@
   username: string;
   email: string;
   password: string;
-  confirmPassword: string
+  conPassword: string
 }
 
 export interface loginData{

@@ -22,7 +22,7 @@ function SignUp() {
     username: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    conPassword: ""
   };
 
   const [form, setForm] = useState(initialForm);
@@ -50,10 +50,16 @@ function SignUp() {
       console.log(loading);
       setLoading(false);
     }
-    catch(error){
-      console.log(error);
+    catch(errorMsg){
+      console.log(errorMsg);
       setLoading(false);
+      if(errorMsg instanceof Error){
+        setError(errorMsg.message);
 
+      }
+      else{
+        setError("Something Went Wrong");
+      }
     }
 
   }
@@ -80,6 +86,21 @@ function SignUp() {
           </p>
 
           <form  className="flex flex-col gap-3 sm:gap-4 mt-8 sm:mt-10" onSubmit={handleSubmitForm}>
+          {error=="Invalid Password"? 
+            (
+             <p role="alert" className="w-full bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm leading-relaxed rounded-md p-3 sm:p-4">
+                - Password should consists of at least 12 characters.<br />
+                - Password should contain at least 1 digit. <br />
+                - Password should contain at least 1 uppercase character. <br/>
+                - Password should contain at least 1 lowercase character. <br/>
+                - Password should contain at least 1 special character.
+              </p> 
+            )
+            ://ternary for check the error message
+            (<p role="alert" className="w-full bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm leading-relaxed rounded-md p-3 sm:p-4">
+                {error}
+              </p>)
+            }
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label htmlFor="firstName" className="sr-only">First Name</label>
@@ -113,15 +134,17 @@ function SignUp() {
 
             <div>
               <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
-              <input id="confirmPassword" name="confirmPassword" type="password" required autoComplete="new-password"
-                 placeholder="Confirm Password" className={fieldClasses} value={form.confirmPassword} onChange={handleChange}/>
+              <input id="confirmPassword" name="conPassword" type="password"  required autoComplete="new-password"
+                 placeholder="Confirm Password" className={fieldClasses} value={form.conPassword} onChange={handleChange}/>
             </div>
 
-            {error && (
+            {/* {error && (
               <p role="alert" className="text-sm text-red-600">
                 {error}
               </p>
-            )}
+            )} */}
+
+
 
             <button
               type="submit"

@@ -46,6 +46,7 @@ async function register(req,res){
             });
 
 
+        console.log(`pass ${userData.password} and con pass ${userData.conPassword}`)
 
         
         if(userData.password !== userData.conPassword)

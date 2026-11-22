@@ -27,10 +27,12 @@ export async function sendRequest(endpoint:string, method: string, body?: any) {
         }
     );
 
+    console.log(response);
+    const data = await response.json();
 
     // Check if the response is successful (status code 200-299)
-    if (!response.ok) throw new Error("Request failed");
-     const data = await response.json();
+    if (!response.ok) throw new Error(data.details);
+    //  const data = await response.json();
 
     return data;
 }
